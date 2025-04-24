@@ -16,6 +16,7 @@
  * 
  * Note: The class below contains placeholders for implementing a future method to update accounts and opportunities.
  *       The accompanying test class 'AsynchronousTest' should also be updated to test this method.
+ * Name: Codell L. jackson
  */
 public with sharing class NextStepFuture {
 
@@ -27,10 +28,30 @@ public with sharing class NextStepFuture {
      * Opportunity Next Step field is a standard field
      * Update the corresponding test class AsynchronousTest and test method nextStepFuture_testUpdateAllNextStep to cover test this method
      */
-    //[public | private ] [static] data_type method_name (input parameters) {
-    //  The body of the method
-    //}
 
+    @future
+    public static void UpdateAllNextStep() {
+    //  The body of the method
+        List<Account> accts = [SELECT Id, Name FROM Account];
+
+        for (Account acc : accts){
+        acc.Next_Step__c = 'Meeting in the future'; 
+        }
+
+    if (!accts.isEmpty()) {
+        update accts; 
+        }
+
+        List<Opportunity> oppts = [SELECT id, Name FROM Opportunity];
+
+        for (Opportunity opp : oppts){
+        opp.NextStep = 'Meeting in the future'; 
+        }
+
+    if (!oppts.isEmpty()) {
+        update oppts; 
+}
+    }
     /*
     * Question 2
     * Update/Uncomment the template code to create a method
@@ -38,12 +59,11 @@ public with sharing class NextStepFuture {
     * Update the corresponding test class AsynchronousTest and test method nextStepFuture_testCreateDealAndUpdateRole to cover test this method
     */
     //Mix DML Error happens when you try to perform DML operations on setup and non-setup objects in a single transaction.
-    public static void createDealAndUpdateRole() {
+
+    @future
+    public static void createBigDeal() {
         Opportunity bigDeal = new Opportunity();
         insertBigDeal(bigDeal);
-
-        UserRole[] roles = [SELECT Id, Name FROM UserRole WHERE Id = :UserInfo.getUserRoleId() OR Name = 'CRO' LIMIT 1];
-        updateUserRoleName(roles);
     }
 
     // Helper method to insert big deal
@@ -55,8 +75,12 @@ public with sharing class NextStepFuture {
         
         insert opp;
     }
+    @future
+    public static void updateUserToCRO() {
 
-
+        UserRole[] roles = [SELECT Id, Name FROM UserRole WHERE Id = :UserInfo.getUserRoleId() OR Name = 'CRO' LIMIT 1];
+        updateUserRoleName(roles);
+}
     // Helper method to update role name
     private static void updateUserRoleName(UserRole[] roles){
         UserRole role;
@@ -64,13 +88,16 @@ public with sharing class NextStepFuture {
             role = new UserRole();
             role.portalType = 'None'; 
             role.CaseAccessForAccountOwner = 'Edit'; 
-            // role.OpportunityAccessForAccountOwner = 'Edit'; //This may need to be uncommented depending on your orgs Organization Wide Defaults(OWD) settings. If you are receiving FIELD_INTEGRITY_EXCEPTION, field integrity exception: unknown (Opportunity access level below organization default): [unknown], uncomment this line.
+        
         } else {
             role = roles[0];
         }
-
+    
         role.Name = 'CRO';
-
         upsert role;
     }
 }
+//role.OpportunityAccessForAccountOwner = 'Edit'; //This may need to be uncommented depending on your orgs Organization Wide Defaults(OWD) settings. 
+    /* If you are receiving FIELD_INTEGRITY_EXCEPTION, field integrity exception: unknown (Opportunity access level below organization default): [unknown], 
+        uncomment this line.
+    */

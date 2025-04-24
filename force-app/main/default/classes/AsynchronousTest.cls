@@ -55,7 +55,10 @@ public with sharing class AsynchronousTest {
 
         // Call the method to test between the startTest and stopTest methods
         Test.startTest();
+
         //YOUR CODE HERE
+        NextStepFuture.UpdateAllNextStep();
+
         Test.stopTest();
 
         // Query the updated accounts and opportunities
@@ -76,15 +79,22 @@ public with sharing class AsynchronousTest {
     @IsTest //2
     static void nextStepFuture_testCreateDealAndUpdateRole() {        
         Test.startTest();
-        NextStepFuture.createDealAndUpdateRole();
+        NextStepFuture.createBigDeal();
         Test.stopTest();
 
         // Due to the Mixed DML error, we need to test the insertBigDeal method
         Opportunity insertedOpportunity = [SELECT Id, Amount, Name, StageName, CloseDate FROM Opportunity WHERE Name = 'Big Deal' LIMIT 1];
         System.assertNotEquals(null, insertedOpportunity, 'Opportunity should have been created.');
         System.assertEquals(1000000, insertedOpportunity.Amount, 'Opportunity Amount is incorrect.');
-
+    }
         // Next, we test the updateUserRoleName method
+    @IsTest //2.5
+    static void nextStepFuture_testUpdateRole() {
+        Test.startTest();
+        NextStepFuture.updateUserToCRO();
+        Test.stopTest();
+
+
         UserRole[] updatedRoles = [SELECT Id, Name FROM UserRole WHERE Name = 'CRO' LIMIT 1];
         System.assertEquals(1, updatedRoles.size(), 'UserRole should exist.');
     }
