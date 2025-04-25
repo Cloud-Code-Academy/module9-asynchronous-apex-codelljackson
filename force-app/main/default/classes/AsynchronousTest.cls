@@ -170,9 +170,10 @@ public with sharing class AsynchronousTest {
         }
     }
 
-    /*  //UNCOMMENT TEST METHODS BELOW ONCE THE NextStepSchedule class is implemented
+     //UNCOMMENT TEST METHODS BELOW ONCE THE NextStepSchedule class is implemented
         //No Changes should be required to the test methods/code below other than uncommenting them
         //Manually setup the scheduled job in Salesforce to run the NextStepSchedule class
+        
     @IsTest //5
     static void nextStepSchedule_testExecute() {
         // Create test data
@@ -211,5 +212,5 @@ public with sharing class AsynchronousTest {
             System.assertEquals('Batching the next meetings together.', opp.NextStep, 'Opportunity NextStep field was not updated correctly.');
         }
     }
-    */
+    
 }
