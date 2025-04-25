@@ -4,29 +4,41 @@
  * This test class provides test methods for various asynchronous operations in Salesforce:
  * 
  * 1. nextStepFuture_testUpdateAllNextStep: 
- *    - This test is designed for the NextStepFuture class. Students should insert their method from the NextStepFuture class within the specified area.
- *    - This test creates test accounts and opportunities and checks if the NextStep fields are correctly updated.
+ * 
+ *    - This test is designed for the NextStepFuture class. Students should insert their method from 
+ *      the NextStepFuture class within the specified area.
+ * 
+ *    - This test creates test accounts and opportunities and checks if the NextStep fields are correctly 
+ *      updated.
  * 
  * 2. nextStepFuture_createDealAndUpdateRole: 
+ * 
  *    - Tests the creation of a big opportunity deal and updates the user role name.
  * 
  * 3. nextStepQueueable_testEnqueueJob: 
+ * 
  *    - Tests the enqueue operation and execution of the NextStepQueueable class.
  *    - Validates if the NextStep fields in Account and Opportunity are set to null after execution.
  * 
  * 4. nextStepBatch_testUpdateAllNextStep: 
+ * 
  *    - Tests the batch class operation for updating NextStep fields in Account and Opportunity.
  * 
  * 5. nextStepSchedule_testExecute (currently commented out): 
- *    - Will test the scheduled job once the NextStepSchedule class is implemented. This test checks if the NextStep fields are correctly updated in both Account and Opportunity objects after the scheduled job execution.
+ * 
+ *    - Will test the scheduled job once the NextStepSchedule class is implemented. This test checks if 
+ *      the NextStep fields are correctly updated in both Account and Opportunity objects after the scheduled 
+ *       job execution.
+ * 
  *    - Manually setup the scheduled job in Salesforce to run the NextStepSchedule class.
  * 
- * NOTE: To run the test for nextStepSchedule_testExecute, students will need to uncomment this test method after implementing the NextStepSchedule class.
+ * NOTE: To run the test for nextStepSchedule_testExecute, students will need to uncomment this test method after 
+ *        implementing the NextStepSchedule class.
  */
 @IsTest
 public with sharing class AsynchronousTest {
 
-    @IsTest
+    @IsTest //1
     static void nextStepFuture_testUpdateAllNextStep() {
         // Create test data
         List<Account> testAccounts = new List<Account>();
@@ -43,7 +55,10 @@ public with sharing class AsynchronousTest {
 
         // Call the method to test between the startTest and stopTest methods
         Test.startTest();
+
         //YOUR CODE HERE
+        NextStepFuture.UpdateAllNextStep();
+
         Test.stopTest();
 
         // Query the updated accounts and opportunities
@@ -61,23 +76,30 @@ public with sharing class AsynchronousTest {
         }
     }
 
-    @IsTest
+    @IsTest //2
     static void nextStepFuture_testCreateDealAndUpdateRole() {        
         Test.startTest();
-        NextStepFuture.createDealAndUpdateRole();
+        NextStepFuture.createBigDeal();
         Test.stopTest();
 
         // Due to the Mixed DML error, we need to test the insertBigDeal method
         Opportunity insertedOpportunity = [SELECT Id, Amount, Name, StageName, CloseDate FROM Opportunity WHERE Name = 'Big Deal' LIMIT 1];
         System.assertNotEquals(null, insertedOpportunity, 'Opportunity should have been created.');
         System.assertEquals(1000000, insertedOpportunity.Amount, 'Opportunity Amount is incorrect.');
-
+    }
         // Next, we test the updateUserRoleName method
+    @IsTest //2.5
+    static void nextStepFuture_testUpdateRole() {
+        Test.startTest();
+        NextStepFuture.updateUserToCRO();
+        Test.stopTest();
+
+
         UserRole[] updatedRoles = [SELECT Id, Name FROM UserRole WHERE Name = 'CRO' LIMIT 1];
         System.assertEquals(1, updatedRoles.size(), 'UserRole should exist.');
     }
 
-    @IsTest
+    @IsTest //3
     static void nextStepQueueable_testEnqueueJob() {
         // Create test data
         List<Account> testAccounts = new List<Account>();
@@ -112,7 +134,7 @@ public with sharing class AsynchronousTest {
         }
     }
 
-    @IsTest
+    @IsTest //4
     static void nextStepBatch_testUpdateAllNextStep() {
         // Create test data
         List<Account> testAccounts = new List<Account>();
@@ -148,10 +170,11 @@ public with sharing class AsynchronousTest {
         }
     }
 
-    /*  //UNCOMMENT TEST METHODS BELOW ONCE THE NextStepSchedule class is implemented
+     //UNCOMMENT TEST METHODS BELOW ONCE THE NextStepSchedule class is implemented
         //No Changes should be required to the test methods/code below other than uncommenting them
         //Manually setup the scheduled job in Salesforce to run the NextStepSchedule class
-    @IsTest
+        
+    @IsTest //5
     static void nextStepSchedule_testExecute() {
         // Create test data
         List<Account> testAccounts = new List<Account>();
@@ -189,5 +212,5 @@ public with sharing class AsynchronousTest {
             System.assertEquals('Batching the next meetings together.', opp.NextStep, 'Opportunity NextStep field was not updated correctly.');
         }
     }
-    */
+    
 }
